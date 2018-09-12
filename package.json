@@ -1,14 +1,14 @@
 {
-  "name": "check-types",
+  "name": "checktypes",
   "version": "1.0.0",
-  "description": "A library to help you validate types of an object using a self defined scheme.",
+  "description": "checktypes is a package to help you check the types of a item variable using simple type or scheme for an object ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zain1992/check-types.git"
+    "url": "git+https://github.com/zain1992/checktypes.git"
   },
   "keywords": [
     "checktypes",
@@ -22,7 +22,7 @@
   "author": "zain1992",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zain1992/check-types/issues"
+    "url": "https://github.com/zain1992/checktypes/issues"
   },
-  "homepage": "https://github.com/zain1992/check-types#readme"
+  "homepage": "https://github.com/zain1992/checktypes#readme"
 }
