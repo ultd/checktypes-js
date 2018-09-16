@@ -35,11 +35,11 @@ checktypes-js is a package to help you check the types of a passed variable. It 
 ### Simple Example
 
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 const aNumber = 33
 
-const [error, numberPassed] = T(aNumber, Number)
+const [error, numberPassed] = checkTypes(aNumber, Number)
 
 if(error)
    console.log(error)
@@ -50,10 +50,10 @@ else
 ### Callback or return style usage
 
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 /*  Callback function style  */
-T( {Item <String|Number|Boolean|Symbol|Array|Object>},
+checkTypes( {Item <String|Number|Boolean|Symbol|Array|Object>},
    {Type <String|Number|Boolean|Symbol|Array|Object>},
    function(error, passedItem){
     if(error){
@@ -67,7 +67,7 @@ T( {Item <String|Number|Boolean|Symbol|Array|Object>},
 
 /*  Return value style  */
 const [error, passedVariable] = 
-T( {Item <String|Number|Boolean|Symbol|Array|Object>},
+checkTypes( {Item <String|Number|Boolean|Symbol|Array|Object>},
    {Type <String|Number|Boolean|Symbol|Array|Object>})
 if(error){
    // handle error
@@ -81,7 +81,7 @@ if(error){
 ### Object with Scheme type checking
 You can define a scheme with types and can be nested with other Objects or Arrays.
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 const personScheme = {
     name: String,
@@ -117,7 +117,7 @@ const personObject = {
     comments: ['is very nice.', 'has a good head on her shoulders']
 }
 
-T(personObject, personScheme, function(errors, passedObject){
+checkTypes(personObject, personScheme, function(errors, passedObject){
     if(errors){
         console.log(errors)
         // [ 
@@ -136,7 +136,7 @@ T(personObject, personScheme, function(errors, passedObject){
 #### Simple Object with no properties's type checked
 
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 const objectToCheck = { 
    username: 'hannah1010',
@@ -144,7 +144,7 @@ const objectToCheck = {
    comments: ['Hey beautiful', 'You\'re a great human being!']
 } 
 
-T(objectToCheck, Object, (errors, passedObject) => {     // or an pass {} instead of Object 
+checkTypes(objectToCheck, Object, (errors, passedObject) => {     // or an pass {} instead of Object 
    if(errors) {
       // handle any errors
    } else {
@@ -156,7 +156,7 @@ T(objectToCheck, Object, (errors, passedObject) => {     // or an pass {} instea
 You can also specify required fields using `$required : [{String name(s) of properties}]`
 
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 const scheme = {
    username: String,
@@ -170,7 +170,7 @@ const objectToCheck = {
    password: 'securePass!',    // ERROR! missing 'rememberMe' property
 } 
 
-T(objectToCheck, scheme, (errors, passedObject) => {
+checkTypes(objectToCheck, scheme, (errors, passedObject) => {
    if(errors) {
       console.log(errors)
       // [ 
@@ -188,8 +188,8 @@ T(objectToCheck, scheme, (errors, passedObject) => {
 You also have the ability to specify all scheme properties as required. Import `$required` from package.
 
 ```js
-const T = require('checktypes-js')
-const { $required } = T
+const checkTypes = require('checktypes-js')
+const { $required } = checkTypes
 
 const scheme = {
    username: String,
@@ -203,7 +203,7 @@ const objectToCheck = {
    rememberMe: false         // ERROR! missing 'username' property
 } 
 
-T(objectToCheck, scheme, (errors, passedObject) => {
+checkTypes(objectToCheck, scheme, (errors, passedObject) => {
    if(errors) {
       console.log(errors)
       // [ 
@@ -219,9 +219,9 @@ T(objectToCheck, scheme, (errors, passedObject) => {
 
 ### Array type checking
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
-const [errors, returnedArray] = T([44, true, 'a sexy string'], Array) // can also pass []
+const [errors, returnedArray] = checkTypes([44, true, 'a sexy string'], Array) // can also pass []
 
 if(errors) {
      // handle errors
@@ -232,9 +232,9 @@ if(errors) {
 
 ### Array with element type checking
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
-const [errors, passedArray] = T([44, '545', 11], [Number])
+const [errors, passedArray] = checkTypes([44, '545', 11], [Number])
 
 if(errors) {
      console.log(errors)
@@ -251,11 +251,11 @@ if(errors) {
 
 ### String, Number, Boolean or Symbol type checking
 ```js
-const T = require('checktypes-js')
+const checkTypes = require('checktypes-js')
 
 const someString = 55
 
-const [error, passedItem] = T(someString, String)
+const [error, passedItem] = checkTypes(someString, String)
 
 if(error) {
    console.log(error)
@@ -281,8 +281,8 @@ getVal({PassedItem Object|Array}, {PropertyName String})
 ```
 #### example: 
 ```js
-const T = require('checktypes-js')
-const { getVal } = T
+const checkTypes = require('checktypes-js')
+const { getVal } = checkTypes
 
 const scheme = {
    request: {
@@ -306,7 +306,7 @@ const requestObject = {
     }
 }
 
-T(requestObject, scheme, function(errors, passedObject){
+checkTypes(requestObject, scheme, function(errors, passedObject){
     if(errors){
         console.log(errors)
         // [ { propertyName: 'request.headers.2.value',
@@ -333,8 +333,8 @@ setVal({PassedItem Object|Array}, {PropertyName String},
 ```
 #### example: 
 ```js
-const T = require('checktypes-js')
-const { getVal, setVal } = T
+const checkTypes = require('checktypes-js')
+const { getVal, setVal } = checkTypes
 
 const scheme = {
    request: {
@@ -358,7 +358,7 @@ const requestObject = {
     }
 }
 
-T(requestObject, scheme, function(errors, passedObject){
+checkTypes(requestObject, scheme, function(errors, passedObject){
     if(errors){
         console.log(errors)
         // [ { propertyName: 'request.headers.2.value',
@@ -389,8 +389,8 @@ getType({PassedItem String|Number|Boolean|Symbol|Object|Array|Undefined|Null})
 ```
 #### example: 
 ```js
-const T = require('checktypes-js')
-const { getType } = T
+const checkTypes = require('checktypes-js')
+const { getType } = checkTypes
 
 const type = getType({lambaRocks: true})
 console.log(type)
@@ -411,8 +411,8 @@ typeToString({PassedType String|Number|Boolean|Symbol|Object|Array})
 ```
 #### example: 
 ```js
-const T = require('checktypes-js')
-const { typeToString } = T
+const checkTypes = require('checktypes-js')
+const { typeToString } = checkTypes
 
 const typeAsString = typeToString(Array)
 
@@ -428,8 +428,8 @@ stringToType({TypeString String})
 ```
 #### example: 
 ```js
-const T = require('checktypes-js')
-const { stringToType } = T
+const checkTypes = require('checktypes-js')
+const { stringToType } = checkTypes
 
 const returnedType = stringToType('Object')
 

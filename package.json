@@ -1,14 +1,14 @@
 {
   "name": "checktypes-js",
   "version": "1.0.0",
-  "description": "checktypes is a package to help you check the types of a item variable using simple type or scheme for an object ",
+  "description": "checktypes-js is a package to help you check the types of a item variable using simple type or scheme for an object ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zain1992/checktypes.git"
+    "url": "git+https://github.com/zain1992/checktypes-js.git"
   },
   "keywords": [
     "checktypes",
@@ -22,7 +22,11 @@
   "author": "zain1992",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zain1992/checktypes/issues"
+    "url": "https://github.com/zain1992/checktypes-js/issues"
   },
-  "homepage": "https://github.com/zain1992/checktypes#readme"
+  "homepage": "https://github.com/zain1992/checktypes-js#readme",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  },
+  "typings": "./.d.ts"
 }
