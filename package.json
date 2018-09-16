@@ -1,6 +1,6 @@
 {
   "name": "checktypes-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "checktypes-js is a package to help you check the types of a item variable using simple type or scheme for an object ",
   "main": "index.js",
   "scripts": {
