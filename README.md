@@ -1,6 +1,6 @@
 # checktypes-js ![CI status](https://img.shields.io/badge/build-passing-brightgreen.svg)
 
-checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array.
+checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array. This package also has typescript support.
 
 ## Installation
 
@@ -29,9 +29,14 @@ checktypes-js is a package to help you check the types of a passed variable. It 
     - [getType](#gettype)
     - [typeToString](#typetostring)
     - [stringToType](#stringtotype)
+    - [propsFromString](#propsfromstring)
 4.  [Contributing](#contributing)
 5.  [License](#license)
 6.  [Support](#support)
+
+### Typescript Support
+
+Use `import { CheckTypesError } from 'checktype-js` for typings of the error objects. Use the package with maximum type checking advatage.. transpile time and run time type checking. What else could you ask for?
 
 ### Simple Example
 
@@ -123,12 +128,12 @@ const personObject = {
 checkTypes(personObject, personScheme, function(errors, passedObject) {
   if (errors) {
     console.log(errors)
-    // [
-    //   { propertyName: 'address.street.number',
-    //     expectedType: 'Number',
-    //     recievedType: 'String',
-    //     required: false }
-    // ]
+    /*
+      [ { propertyName: 'address.street.number',
+          expectedType: 'Number',
+          recievedType: 'String',
+          required: false } ]
+    */
 
     // handle errors...
   } else {
@@ -178,12 +183,13 @@ const objectToCheck = {
 checkTypes(objectToCheck, scheme, (errors, passedObject) => {
    if(errors) {
       console.log(errors)
-      // [
-      //   { propertyName: 'rememberMe',
-      //     expectedType: 'Boolean',
-      //     recievedType: 'None',
-      //     required: true }
-      // ]
+   /*
+      [ { propertyName: 'rememberMe',
+          expectedType: 'Boolean',
+          recievedType: 'None',
+          required: true } ]
+   */
+
    } else {
       // do stuff with passedObject
 })
@@ -201,23 +207,23 @@ const scheme = {
    username: String,
    password: String,
    rememberMe: Boolean,
-   $required                 // just pass $required
+   $required               // just pass $required
 }
 
 const objectToCheck = {
    password: 'securePass!',
-   rememberMe: false         // ERROR! missing 'username' property
+   rememberMe: false       // ERROR! missing 'username' property
 }
 
 checkTypes(objectToCheck, scheme, (errors, passedObject) => {
    if(errors) {
       console.log(errors)
-      // [
-      //   { propertyName: 'username',
-      //     expectedType: 'String',
-      //     recievedType: 'None',
-      //     required: true }
-      // ]
+   /*
+      [ { propertyName: 'username',
+          expectedType: 'String',
+          recievedType: 'None',
+          required: true } ]
+   */
    } else {
       // do stuff with passedObject
 })
@@ -246,12 +252,12 @@ const [errors, passedArray] = checkTypes([44, "545", 11], [Number])
 
 if (errors) {
   console.log(errors)
-  // [
-  //   { propertyName: '1',
-  //     expectedType: 'Number',
-  //     recievedType: 'String',
-  //     required: false }
-  // ]
+  /*
+    [ { propertyName: '[1]',
+        expectedType: 'Number',
+        recievedType: 'String',
+        required: false } ]
+  */
 } else {
   // do stuff with passedArray
 }
@@ -268,15 +274,18 @@ const [error, passedItem] = checkTypes(someString, String)
 
 if (error) {
   console.log(error)
-  //  {expectedType: 'String',
-  //   recievedType: 'Number',
-  //   required: true}
+  /*
+    [ { propertyName: '' 
+        expectedType: 'String',
+        recievedType: 'Number',
+        required: true } ]
+  */
 } else {
   // do stuff with passedItem
 }
 ```
 
-When type checking primitive types the error will only be an error Object not an Array of error Objects considering only one property/item being checked.
+When type checking primitive types or when an Object or Array type mismatches at the parent/root level, the error object will have an empty string `''` for the propertyName as it's not a property where the error occured. Also, the parent/root level is always required. You wouldn't be type checking if you didn't need it ;)
 
 ## Helper Functions
 
@@ -287,7 +296,7 @@ This library provides a few helper functions to help you come up with innovative
 Use this helper function to get a value within the passed Object or Array using propertyName String.
 
 ```js
-getVal({PassedItem Object|Array}, {PropertyName String})
+getVal({PassedItem Object|Array}, {PropertyName String}, {StepBack: Number})
 ```
 
 #### example:
@@ -306,7 +315,7 @@ const scheme = {
 }
 
 const requestObject = {
-  request: {
+  requestDetails: {
     headers: [
       { name: "Authentication", value: "Bearer ..." },
       { name: "Content-Type", value: "application/json" },
@@ -321,18 +330,28 @@ const requestObject = {
 checkTypes(requestObject, scheme, function(errors, passedObject) {
   if (errors) {
     console.log(errors)
-    // [ { propertyName: 'request.headers.2.value',
-    //     expectedType: 'String',
-    //     recievedType: 'Number',
-    //     required: false } ]
+    /*
+      [ { propertyName: 'request.headers[2]value',
+          expectedType: 'String',
+          recievedType: 'Number',
+          required: false } ]
+    */
     const value = getVal(passedObject, errors[0].propertyName)
     console.log(value)
     // 0
+
+    /*   Or if you want encompassing object use stepBack (3rd argument)   */
+
+    const objectValue = getVal(passedObject, errors[0].propertyName, 1)
+    console.log(objectValue)
+    // { name: "Cache-Control", value: 0 }
   } else {
     // do stuff with passedObject
   }
 })
 ```
+
+You can use the `stepBack` argument to step X properties back. So if you want to access the whole `requestDetails` object in above example, `stepBack` using `stepBack` set to `3`. If you set stepBack farther than the number of properties that exist, function will throw an Error.
 
 ### setVal()
 
@@ -340,7 +359,8 @@ Use this helper function to set a new value within the passed Object or Array us
 
 ```js
 setVal({PassedItem Object|Array}, {PropertyName String},
-       {NewValue String|Number|Boolean|Symbol|Object|Array})
+       {NewValue String|Number|Boolean|Symbol|Object|Array},
+       {StepBack: Number})
 ```
 
 #### example:
@@ -359,7 +379,7 @@ const scheme = {
 }
 
 const requestObject = {
-  request: {
+  requestDetails: {
     headers: [
       { name: "Authentication", value: "Bearer ..." },
       { name: "Content-Type", value: "application/json" },
@@ -374,10 +394,12 @@ const requestObject = {
 checkTypes(requestObject, scheme, function(errors, passedObject) {
   if (errors) {
     console.log(errors)
-    // [ { propertyName: 'request.headers.2.value',
-    //     expectedType: 'String',
-    //     recievedType: 'Number',
-    //     required: false } ]
+    /*
+      [ { propertyName: 'request.headers[2]value',
+          expectedType: 'String',
+          recievedType: 'Number',
+          required: false } ]
+    */
     const { propertyName } = errors[0]
     const value = getVal(passedObject, propertyName)
     console.log(value)
@@ -386,6 +408,99 @@ checkTypes(requestObject, scheme, function(errors, passedObject) {
     const changedValue = getVal(passedObject, propertyName)
     console.log(changedValue)
     // 'no-cache'
+  } else {
+    // do stuff with passedObject
+  }
+})
+```
+
+You can use `stepBack` argument 4th argument as a way to set value to the encompassing Object or Array. It is useful for cases as such:
+
+```js
+const checkTypes = require("checktypes-js")
+const { getVal, setVal } = checkTypes
+
+const saleScheme = {
+  order: {
+    number: Number,
+    items: [String],
+    customer: {
+      name: String,
+      phone: String,
+      address: {
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+        country: String
+      }
+    }
+  },
+  shipment: {
+    postmarkId: Number,
+    departed: Number,
+    service: String
+  }
+}
+
+const aSale = {
+  order: {
+    number: 3453434,
+    items: ["purse", "ring", "jacket"],
+    customer: {
+      name: "Hannah Medcraft",
+      phone: "214-000-3443",
+      address: {
+        street: "123 Main St",
+        city: "Dallas",
+        state: "TX",
+        zipCode: 72034,
+        country: "USA"
+      }
+    }
+  },
+  shipment: {
+    postmarkId: 3423452456675,
+    departed: 15604955496,
+    service: "UPS"
+  }
+}
+
+checkTypes(aSale, saleScheme, function(errors, passedObject) {
+  if (errors) {
+    console.log(errors)
+    /*
+      [ { propertyName: 'order.customer.address.zipCode',
+          expectedType: 'Number',
+          recievedType: 'String',
+          required: false } ]
+    */
+    const { propertyName } = errors[0]
+    const wholeAddress = getVal(passedObject, propertyName, 1)
+    console.log(wholeAddress)
+    /*
+      {
+        street: '123 Main St',
+        city: 'Dallas',
+        state: 'TX',
+        zipCode: 72034,
+        country: 'USA'
+      }  
+    */
+    const newValidatedAddress = validateAddress(wholeAddress)
+    setVal(passedObject, propertyName, newValidatedAddress, 1)
+
+    const changedValue = getVal(passedObject, propertyName, 1)
+    console.log(changedValue)
+    /*
+      {
+        street: '123 Main Steet N',
+        city: 'Irving',
+        state: 'TX',
+        zipCode: '72034-3453',
+        country: 'USA'
+      }   
+    */
   } else {
     // do stuff with passedObject
   }
@@ -455,6 +570,27 @@ const returnedType = stringToType("Object")
 
 console.log(Object === returnedType)
 //  true
+```
+
+### propsFromString()
+
+Use this helper function to convert a string type to a Javascript type.
+
+```js
+propsFromString({AccessorString String})
+```
+
+#### example:
+
+```js
+const checkTypes = require("checktypes-js")
+const { propsFromString } = checkTypes
+
+const anAccessorString = "order[1]address.zipCode"
+const propertiesArray = propsFromString(anAccessorString)
+
+console.log(propertiesArray)
+//  ['order', '1', 'address', 'zipCode']
 ```
 
 ## Contributing

@@ -1,8 +1,8 @@
 /**
  * Check if the passed item is correct type, returning
- * an array with element 0 an Array of errors if exist or null
- * and element 1 the passed item. If using call back returns
- * function with errors Array and passed item as arguments 1 & 2
+ * in 1st item an Array of errors if exist or null if not
+ * and 2nd item the passed item itself. If using callback style, returns
+ * function with errors Array and passed item as arguments 1 & 2.
  *
  * Examples:
  *
@@ -68,11 +68,14 @@ function checkTypes(passed, schema, cb) {
   const schemaType = schemaTypeToString(schema)
 
   if (passedType !== schemaType) {
-    error = {
-      expectedType: schemaType,
-      receivedType: passedType,
-      required: true
-    }
+    error = [
+      {
+        propertyName: "",
+        expectedType: schemaType,
+        receivedType: passedType,
+        required: true
+      }
+    ]
 
     returnItem = passed
     return callback ? cb(error, returnItem) : [error, returnItem]
@@ -339,45 +342,69 @@ checkTypes.getType = function(elem) {
   return Object.prototype.toString.call(elem).slice(8, -1)
 }
 
-checkTypes.getVal = function(passedObjectOrArray, accessorString) {
-  accessorString = accessorString.replace(/\[(\w+)\]/g, ".$1")
-  accessorString = accessorString.replace(/^\./, "")
-  var accessorStringsSplit = accessorString.split(".")
-  for (var i = 0; i < accessorStringsSplit.length; i++) {
-    var val = accessorStringsSplit[i]
-    if (val in passedObjectOrArray) {
-      passedObjectOrArray = passedObjectOrArray[val]
-    } else {
-      return
+checkTypes.getVal = function(passedObjOrArr, accessorString, stepBack = 0) {
+  function get() {
+    var passedObjectOrArray = passedObjOrArr
+    if (stepBack < 0) throw new Error("stepBack must be zero or greater.")
+    accessorString = accessorString.replace(/\[(\w+)\]/g, ".$1")
+    accessorString = accessorString.replace(/^\./, "")
+    var accessorStringsSplit = accessorString.split(".")
+    if (accessorStringsSplit.length - stepBack < 1)
+      throw new Error("stepBack cannot be more than total properties.")
+    for (var i = 0; i < accessorStringsSplit.length - stepBack; i++) {
+      var val = accessorStringsSplit[i]
+      if (val in passedObjectOrArray) {
+        passedObjectOrArray = passedObjectOrArray[val]
+      } else {
+        throw new Error("Invalid accessorString passed.")
+      }
     }
+    return passedObjectOrArray
   }
-  return passedObjectOrArray
+  return get()
 }
 
-checkTypes.setVal = function(passedObject, accessorString, newValue) {
+checkTypes.setVal = function(
+  passedObject,
+  accessorString,
+  newValue,
+  stepBack = 0
+) {
+  if (stepBack < 0) throw new Error("stepBack must be zero or greater.")
   function set(path, value) {
     path = path.replace(/\[(\w+)\]/g, ".$1")
     path = path.replace(/^\./, "")
-    var schema = passedObject
+    var arrOrObj = passedObject
     var pathList = path.split(".")
-    var len = pathList.length
+    var len = pathList.length - stepBack
+    if (pathList.length - stepBack < 1)
+      throw new Error("stepBack cannot be more than total properties.")
     for (var i = 0; i < len - 1; i++) {
       var elem = pathList[i]
-      if (!schema[elem]) schema[elem] = {}
-      schema = schema[elem]
+      if (!arrOrObj[elem]) {
+        throw new Error("Invalid accessorString passed.")
+      } else {
+        arrOrObj = arrOrObj[elem]
+      }
     }
-    schema[pathList[len - 1]] = value
-    return schema[pathList[len - 1]]
+    arrOrObj[pathList[len - 1]] = value
+    return arrOrObj[pathList[len - 1]]
   }
   return set(accessorString, newValue)
 }
 
+checkTypes.propsFromString = function(accessorString) {
+  if (!accessorString.length) return []
+  accessorString = accessorString.replace(/\[(\w+)\]/g, ".$1")
+  accessorString = accessorString.replace(/^\./, "")
+  const accessorStringList = accessorString.split(".")
+  return accessorStringList
+}
+
 checkTypes.typeToString = function(elem) {
-  try {
-    return elem.toString().substring(9, elem.toString().indexOf("("))
-  } catch (e) {
-    if (e instanceof TypeError) return "Null"
-  }
+  if (elem === undefined) return "Undefined"
+  if (elem === null) return "Null"
+  return elem.toString().substring(9, elem.toString().indexOf("("))
 }
 
 checkTypes.stringToType = function(typeString) {
