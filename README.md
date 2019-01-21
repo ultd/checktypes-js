@@ -1,4 +1,4 @@
-# checktypes-js ![CI status](https://travis-ci.com/zain1992/checktypes-js.svg?branch=master)
+# checktypes-js [![CI status](https://travis-ci.com/zain1992/checktypes-js.svg?branch=master)](https://travis-ci.com/zain1992/checktypes-js)
 
 checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array. This package also has typescript support.
 
