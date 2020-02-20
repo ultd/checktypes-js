@@ -1,4 +1,4 @@
-# checktypes-js ![CI status](https://travis-ci.com/ultd/checktypes-js.svg?branch=master)
+# checktypes-js [![CI status](https://travis-ci.com/ultd/checktypes-js.svg?branch=master)](https://travis-ci.com/ultd/checktypes-js)
 
 checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array. This package also has typescript support.
 
@@ -90,23 +90,6 @@ You can define a scheme with types and can be nested with other Objects or Array
 ```js
 const checkTypes = require("checktypes-js")
 
-const personScheme = {
-  name: String,
-  age: Number,
-  isMarried: Boolean,
-  children: [{ name: String, age: Number }],
-  address: {
-    street: {
-      number: Number,
-      name: String
-    },
-    city: String,
-    state: String,
-    country: String
-  },
-  comments: [String]
-}
-
 const personObject = {
   name: "Shelby",
   age: 32,
@@ -122,6 +105,23 @@ const personObject = {
     country: "USA"
   },
   comments: ["is very nice.", "has a good head on her shoulders"]
+}
+
+const personScheme = {
+  name: String,
+  age: Number,
+  isMarried: Boolean,
+  children: [{ name: String, age: Number }],
+  address: {
+    street: {
+      number: Number,
+      name: String
+    },
+    city: String,
+    state: String,
+    country: String
+  },
+  comments: [String]
 }
 
 checkTypes(personObject, personScheme, function(errors, passedObject) {
