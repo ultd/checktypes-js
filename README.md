@@ -1,4 +1,4 @@
-# checktypes-js ![CI status](https://travis-ci.com/zain1992/checktypes-js.svg?branch=master)
+# checktypes-js ![CI status](https://travis-ci.com/ultd/checktypes-js.svg?branch=master)
 
 checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array. This package also has typescript support.
 
@@ -59,26 +59,25 @@ else
 const checkTypes = require('checktypes-js')
 
 /*  Callback function style  */
-checkTypes( {Item <String|Number|Boolean|Symbol|Array|Object>},
-   {Type <String|Number|Boolean|Symbol|Array|Object>},
+checkTypes(item: String|Number|Boolean|Symbol|Array|Object,
+           type: String|Number|Boolean|Symbol|Array|Object,
    function(error, passedItem){
-    if(error){
-       // handle error
-    } else {
-       // do stuff with passedItem
-    }
+      if(error){
+        // handle error
+      } else {
+        // do stuff with passedItem
+      }
 })
 
 // OR
 
 /*  Return value style  */
-const [error, passedVariable] =
-checkTypes( {Item <String|Number|Boolean|Symbol|Array|Object>},
-   {Type <String|Number|Boolean|Symbol|Array|Object>})
+const [error, passedItem] = checkTypes(item: String|Number|Boolean|Symbol|Array|Object,
+                                       type: String|Number|Boolean|Symbol|Array|Object)
 if(error){
    // handle error
 } else {
-   // do stuff with passedVariable
+   // do stuff with passedItem
 }
 ```
 
