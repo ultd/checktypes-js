@@ -1,5 +1,7 @@
 # checktypes-js [![CI status](https://travis-ci.com/ultd/checktypes-js.svg?branch=master)](https://travis-ci.com/ultd/checktypes-js)
 
+![Checktypes-JS Logo](https://user-images.githubusercontent.com/12675427/74995506-14ecbd00-541f-11ea-8a1a-b4448fdcab0d.png)
+
 checktypes-js is a package to help you check the types of a passed variable. It also allows you to check types of an object using an object scheme or an Array and types of elements within the Array. This package also has typescript support.
 
 ## Installation
@@ -573,7 +575,7 @@ console.log(Object === returnedType)
 
 ### propsFromString()
 
-Use this helper function to convert a string type to a Javascript type.
+Use this helper function to convert an accessor string to an array of property names (for use to traverse through an object if needed).
 
 ```js
 propsFromString({AccessorString String})
