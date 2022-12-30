@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/ultd/checktypes-js#readme",
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "^29.3.1"
   },
   "typings": "./index.d.ts"
 }
